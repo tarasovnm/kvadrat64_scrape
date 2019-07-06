@@ -28,6 +28,8 @@ class AllFlatsPage:
     @property
     def page_count(self):
         logging.debug('Finding all number of pages...')
-
-        logging.info('Found number of pages available: {page_num}')
-        return 1
+        locator = AllFlatsPageLocators.PAGE_COUNT
+        page_num_list = [int(item.text) for item in self.soup.select(locator)]
+        page_num = page_num_list[-1]
+        logging.info(f'Found number of pages available: {page_num}')
+        return page_num

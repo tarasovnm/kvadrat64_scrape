@@ -15,25 +15,32 @@ logger = logging.getLogger('scraping')
 logger.info('Loading first page with ads list...')
 
 base_url = 'https://kvadrat64.ru/'
-flats_url = 'sellflatbank-1000-1.html'
 
-page_content = requests.get(base_url + flats_url).content
+page_content = requests.get(base_url + 'sellflatbank-1000-1.html').content
 page = AllFlatsPage(page_content)
+page_count = 2 # page.page_count
 
-flats_links = page.ad_links
+for i in range(page_count):
+    logger.debug(f'Opening {i+1} page with ads lists...')
+    page_content = requests.get(base_url + f'sellflatbank-1000-{i+1}.html').content
+    page = AllFlatsPage(page_content)
 
-logger.info('Loading ad page...')
+    flats_links = page.ad_links
 
-flat_page_content = requests.get(base_url + flats_links[0]).content
-flat_page = FlatPage(flat_page_content)
+    for link in flats_links:
+        logger.info(f'Loading ad page: {link}...')
 
-flat_parser = FlatParser(flat_page.dates_block, flat_page.header, flat_page.main_block)
-print(flat_parser)
+        flat_page_content = requests.get(base_url + link).content
+        flat_page = FlatPage(flat_page_content)
+
+        flat_parser = FlatParser(flat_page.dates_block, flat_page.header, flat_page.main_block)
+        print(flat_parser)
 
 # План
 # [x] Добавить систему контроля версий
 # [x] Добавить логирование
-# [ ] Добавить код обхода страниц и объявлений
+# [x] Добавить код обхода страниц и объявлений
+# [ ] Доработать код извлечения информации со страницы об объекте
 # [ ] Добавить обработку исключений на открытие url
 # [ ] Добавить обработку исключений на поиск элементов по селектору
 # [ ] Добавить код сохранения данных в csv-файл
