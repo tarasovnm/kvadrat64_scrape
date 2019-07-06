@@ -18,7 +18,7 @@ base_url = 'https://kvadrat64.ru/'
 
 page_content = requests.get(base_url + 'sellflatbank-1000-1.html').content
 page = AllFlatsPage(page_content)
-page_count = 2 # page.page_count
+page_count = 1 # TODO: change to page.page_count
 
 for i in range(page_count):
     logger.debug(f'Opening {i+1} page with ads lists...')

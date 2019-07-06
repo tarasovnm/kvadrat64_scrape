@@ -32,17 +32,29 @@ class FlatParser:
     def dates(self):
         logger.debug('Finding dates...')
         dates_raw = self.dates_block
-        dates_raw = BeautifulSoup(str(dates_raw).split('<br/>')[0], 'html.parser').text
+        dates_raw = BeautifulSoup(str(dates_raw).split('<br/>')[0], 'html.parser').text.split(', ')
         logger.debug(f'Dates found: {dates_raw}')
-        return dates_raw
+        dates = {elem.split(' ')[0].capitalize(): elem.split(' ')[1] for elem in dates_raw}
+        return dates
 
     @property
     def title(self):
         logger.debug('Finding title...')
         locator = FlatLocators.TITLE
         title_raw = self.header[1].select_one(locator).text.strip()
-        logger.debug(f'Title found: {title_raw}')
-        return title_raw
+        title_list = title_raw.split('м²')
+        title_list = [elem.strip() for elem in title_list]
+        logger.debug(f'Title found: {title_list}')
+
+        area = title_list[0].split(' ')[-1]
+        object_type = title_list[0].replace(area, '').strip()
+
+        address = title_list[1]
+        if address[0] == ',':
+            address = address[1:]
+        address = address.replace('на карте', '').strip()
+
+        return {'Тип': object_type, 'Площадь': area, 'Адрес': address}
 
     @property
     def specs(self):
@@ -54,17 +66,29 @@ class FlatParser:
         specs_raw = [BeautifulSoup(elem, 'html.parser').text.strip() for elem in specs_raw]
         specs_raw = list(filter(None, specs_raw))
         specs_raw.pop(0)
-        logger.debug(f'Specs found: {areas + specs_raw}')
-        return areas + specs_raw
+        specs = areas + specs_raw
+        logger.debug(f'Specs found: {specs}')
+        specs = {spec.split(':')[0]:spec.split(':')[1].replace('м²', '').strip() for spec in specs}
+        return specs
 
     @property
     def deal_info(self):
         logger.debug('Finding deal info...')
         locator = FlatLocators.DEAL
-        deal_info = self.main_block.select_one(locator)
-        deal_info = [BeautifulSoup(elem, 'html.parser').text.strip() for elem in str(deal_info).split('<br/>')]
-        deal_info = list(filter(None, deal_info))
-        logger.debug(f'Deal info found: {deal_info}')
+        deal_info_raw = self.main_block.select_one(locator)
+        deal_info_raw = [BeautifulSoup(elem, 'html.parser').text.strip() for elem in str(deal_info_raw).replace('</span>','<br/>').split('<br/>')]
+        deal_info_raw = list(filter(None, deal_info_raw))
+        logger.debug(f'Deal info found: {deal_info_raw}')
+
+        deal_info = {}
+        for elem in deal_info_raw:
+            splited_elem = elem.split(':')
+            if len(splited_elem) > 1:
+                if elem.split(':')[1].strip() != '':
+                    part_one = elem.split(':')[0].strip()
+                    part_two = elem.split(':')[1].replace('рублей', '').replace('за м²', '').strip()
+                    deal_info[part_one] = part_two
+
         return deal_info
 
     @property
@@ -73,4 +97,4 @@ class FlatParser:
         locator = FlatLocators.URL
         ad_url = self.main_block.select_one(locator).text.split(': ')[1]
         logger.debug(f'Url found: {ad_url}')
-        return ad_url
+        return {'url': ad_url}
