@@ -98,3 +98,7 @@ class FlatParser:
         ad_url = self.main_block.select_one(locator).text.split(': ')[1]
         logger.debug(f'Url found: {ad_url}')
         return {'url': ad_url}
+
+    @property
+    def full_info(self):
+        return {**self.dates, **self.title, **self.specs, **self.deal_info, **self.url}
