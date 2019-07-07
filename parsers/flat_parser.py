@@ -1,6 +1,7 @@
 import logging
 from bs4 import BeautifulSoup
 from locators.flat_locators import FlatLocators
+from utils.queries import get_soup_element, get_soup_elements
 
 logger = logging.getLogger('scraping.flat_parser')
 
@@ -41,7 +42,7 @@ class FlatParser:
     def title(self):
         logger.debug('Finding title...')
         locator = FlatLocators.TITLE
-        title_raw = self.header[1].select_one(locator).text.strip()
+        title_raw = get_soup_element(self.header[1], locator).text.strip()
         title_list = title_raw.split('м²')
         title_list = [elem.strip() for elem in title_list]
         logger.debug(f'Title found: {title_list}')
@@ -60,7 +61,7 @@ class FlatParser:
     def specs(self):
         logger.debug('Finding specs...')
         locator = FlatLocators.SPECS
-        specs_raw = str(self.main_block.select_one(locator)).split('<br/>')
+        specs_raw = str(get_soup_element(self.main_block, locator)).split('<br/>')
         areas = [BeautifulSoup(elem, 'html.parser').text.strip() for elem in specs_raw[0].split('</span>')]
         areas = list(filter(None, areas))
         specs_raw = [BeautifulSoup(elem, 'html.parser').text.strip() for elem in specs_raw]
@@ -75,7 +76,7 @@ class FlatParser:
     def deal_info(self):
         logger.debug('Finding deal info...')
         locator = FlatLocators.DEAL
-        deal_info_raw = self.main_block.select_one(locator)
+        deal_info_raw = get_soup_element(self.main_block, locator)
         deal_info_raw = [BeautifulSoup(elem, 'html.parser').text.strip() for elem in str(deal_info_raw).replace('</span>','<br/>').split('<br/>')]
         deal_info_raw = list(filter(None, deal_info_raw))
         logger.debug(f'Deal info found: {deal_info_raw}')
@@ -95,7 +96,7 @@ class FlatParser:
     def url(self):
         logger.debug('Finding url...')
         locator = FlatLocators.URL
-        ad_url = self.main_block.select_one(locator).text.split(': ')[1]
+        ad_url = get_soup_element(self.main_block, locator).text.split(': ')[1]
         logger.debug(f'Url found: {ad_url}')
         return {'url': ad_url}
 
