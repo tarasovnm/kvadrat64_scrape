@@ -7,10 +7,10 @@ from pages.flat_page import FlatPage
 from parsers.flat_parser import FlatParser
 from utils.queries import get_page_content
 
-logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
-                    datefmt='%d-%m-%Y %H%:%M:%S',
+logging.basicConfig(format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
+                    datefmt='%m-%d-%Y %H:%M:%S',
                     level=logging.DEBUG,
-                    filename='logs.txt')
+                    filename="logs.txt")
 
 logger = logging.getLogger('scraping')
 
@@ -50,5 +50,5 @@ with open('living_realty.json', 'w') as json_file:
 # [x] Доработать код извлечения информации со страницы об объекте
 # [x] Добавить обработку исключений на открытие url
 # [x] Добавить обработку исключений на поиск элементов по селектору
-# [ ] Продумать поведение в случае возникновения исключений
+# [x] Продумать поведение в случае возникновения исключений
 # [x] Добавить код сохранения данных в json-файл

@@ -34,7 +34,7 @@ class FlatParser:
         logger.debug('Finding dates...')
         dates_raw = self.dates_block
         dates_raw = BeautifulSoup(str(dates_raw).split('<br/>')[0], 'html.parser').text.split(', ')
-        logger.debug(f'Dates found: {dates_raw}')
+        logger.debug(f'Dates found: {dates_raw}'.encode("utf-8"))
         dates = {elem.split(' ')[0].capitalize(): elem.split(' ')[1] for elem in dates_raw}
         return dates
 
@@ -45,7 +45,7 @@ class FlatParser:
         title_raw = get_soup_element(self.header[1], locator).text.strip()
         title_list = title_raw.split('м²')
         title_list = [elem.strip() for elem in title_list]
-        logger.debug(f'Title found: {title_list}')
+        logger.debug(f'Title found: {title_list}'.encode("utf-8"))
 
         area = title_list[0].split(' ')[-1]
         object_type = title_list[0].replace(area, '').strip()
@@ -68,7 +68,7 @@ class FlatParser:
         specs_raw = list(filter(None, specs_raw))
         specs_raw.pop(0)
         specs = areas + specs_raw
-        logger.debug(f'Specs found: {specs}')
+        logger.debug(f'Specs found: {specs}'.encode("utf-8"))
         specs = {spec.split(':')[0]:spec.split(':')[1].replace('м²', '').strip() for spec in specs}
         return specs
 
@@ -79,7 +79,7 @@ class FlatParser:
         deal_info_raw = get_soup_element(self.main_block, locator)
         deal_info_raw = [BeautifulSoup(elem, 'html.parser').text.strip() for elem in str(deal_info_raw).replace('</span>','<br/>').split('<br/>')]
         deal_info_raw = list(filter(None, deal_info_raw))
-        logger.debug(f'Deal info found: {deal_info_raw}')
+        logger.debug(f'Deal info found: {deal_info_raw}'.encode("utf-8"))
 
         deal_info = {}
         for elem in deal_info_raw:
