@@ -24,24 +24,34 @@ page_count = page.page_count
 
 ads_list = []
 
-for i in range(page_count):
-    logger.debug(f'Opening {i+1} page with ads lists...')
-    page_content = get_page_content(base_url + f'sellflatbank-1000-{i+1}.html')
-    page = AllFlatsPage(page_content)
+page_content = get_page_content(base_url + f'sellflatbank-1000-1.html')
+page = AllFlatsPage(page_content)
+flats_links = page.ad_links
 
-    flats_links = page.ad_links
+for link in flats_links:
+    flat_page_content = get_page_content(base_url + link)
+    flat_page = FlatPage(flat_page_content)
+    flat_parser = FlatParser(flat_page.dates_block, flat_page.header, flat_page.main_block)
+    print(flat_parser.full_info_clean)
 
-    for link in flats_links:
-        logger.info(f'Loading ad page: {link}...')
-        flat_page_content = get_page_content(base_url + link)
-        flat_page = FlatPage(flat_page_content)
+# for i in range(page_count):
+#     logger.debug(f'Opening {i+1} page with ads lists...')
+#     page_content = get_page_content(base_url + f'sellflatbank-1000-{i+1}.html')
+#     page = AllFlatsPage(page_content)
+#
+#     flats_links = page.ad_links
+#
+#     for link in flats_links:
+#         logger.info(f'Loading ad page: {link}...')
+#         flat_page_content = get_page_content(base_url + link)
+#         flat_page = FlatPage(flat_page_content)
+#
+#         flat_parser = FlatParser(flat_page.dates_block, flat_page.header, flat_page.main_block)
+#         print(flat_parser.full_info)
+#         ads_list.append(flat_parser.full_info)
 
-        flat_parser = FlatParser(flat_page.dates_block, flat_page.header, flat_page.main_block)
-        print(flat_parser.full_info)
-        ads_list.append(flat_parser.full_info)
-
-with open('living_realty.json', 'w') as json_file:
-    json.dump(ads_list , json_file)
+# with open('living_realty.json', 'w') as json_file:
+#     json.dump(ads_list , json_file)
 
 # План
 # [x] Добавить систему контроля версий
