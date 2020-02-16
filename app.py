@@ -18,12 +18,15 @@ logger.info('Loading first page with ads list...')
 
 base_url = 'https://kvadrat64.ru/'
 
-page_content = get_page_content(base_url + 'sellflatbank-1000-1.html')
+page_content = get_page_content(base_url + 'sellflatbank-50-1.html')
 page = AllFlatsPage(page_content)
 page_count = page.page_count
+print(f'Найдено {page_count} страниц с объявлениями о продаже квартир')
 
+# ВРЕМЕННЫЙ БЛОК КОДА БЕЗ ОБХОДА ВСЕХ СТРАНИЦ С ОБЪЯВЛЕНИЯМИ 
+# ================================================================================
+print('Собираю ссылки на объявления с первой страницы')
 ads_list = []
-
 page_content = get_page_content(base_url + f'sellflatbank-1000-1.html')
 page = AllFlatsPage(page_content)
 flats_links = page.ad_links
@@ -33,6 +36,9 @@ for link in flats_links:
     flat_page = FlatPage(flat_page_content)
     flat_parser = FlatParser(flat_page.dates_block, flat_page.header, flat_page.main_block)
     print(flat_parser.full_info_clean)
+
+# КОНЕЦ ВРЕМЕННОГО БЛОКА КОДА
+# ================================================================================
 
 # for i in range(page_count):
 #     logger.debug(f'Opening {i+1} page with ads lists...')
