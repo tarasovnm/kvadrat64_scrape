@@ -21,21 +21,26 @@ base_url = 'https://kvadrat64.ru/'
 page_content = get_page_content(base_url + 'sellflatbank-50-1.html')
 page = AllFlatsPage(page_content)
 page_count = page.page_count
+deal_type = 'Продажа'
 print(f'Найдено {page_count} страниц с объявлениями о продаже квартир')
 
 # ВРЕМЕННЫЙ БЛОК КОДА БЕЗ ОБХОДА ВСЕХ СТРАНИЦ С ОБЪЯВЛЕНИЯМИ 
 # ================================================================================
 print('Собираю ссылки на объявления с первой страницы')
 ads_list = []
-page_content = get_page_content(base_url + f'sellflatbank-1000-1.html')
+page_content = get_page_content(base_url + f'sellflatbank-50-1.html')
 page = AllFlatsPage(page_content)
 flats_links = page.ad_links
 
 for link in flats_links:
     flat_page_content = get_page_content(base_url + link)
     flat_page = FlatPage(flat_page_content)
-    flat_parser = FlatParser(flat_page.dates_block, flat_page.header, flat_page.main_block)
-    print(flat_parser.full_info_clean)
+    flat_parser = FlatParser(deal_type, flat_page.dates_block, flat_page.header, flat_page.main_block)
+    print('=======================================================================')
+    # print(flat_parser.specs)
+    objec_description = flat_parser.full_info_clean
+    for key in objec_description:
+      print(key, objec_description[key])
 
 # КОНЕЦ ВРЕМЕННОГО БЛОКА КОДА
 # ================================================================================
@@ -58,13 +63,3 @@ for link in flats_links:
 
 # with open('living_realty.json', 'w') as json_file:
 #     json.dump(ads_list , json_file)
-
-# План
-# [x] Добавить систему контроля версий
-# [x] Добавить логирование
-# [x] Добавить код обхода страниц и объявлений
-# [x] Доработать код извлечения информации со страницы об объекте
-# [x] Добавить обработку исключений на открытие url
-# [x] Добавить обработку исключений на поиск элементов по селектору
-# [x] Продумать поведение в случае возникновения исключений
-# [x] Добавить код сохранения данных в json-файл

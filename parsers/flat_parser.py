@@ -2,6 +2,7 @@ import logging
 from bs4 import BeautifulSoup
 from locators.flat_locators import FlatLocators
 from utils.queries import get_soup_element, get_soup_elements
+from utils.cleaners import *
 
 logger = logging.getLogger('scraping.flat_parser')
 
@@ -11,8 +12,9 @@ class FlatParser:
     Класс, который получает на входе блоки страницы и извлекает из них информацию по квартире
     """
 
-    def __init__(self, dates_block, header, main_block):
+    def __init__(self, deal_type, dates_block, header, main_block):
         logger.debug('New FlatScraper created')
+        self.deal_type = deal_type
         self.dates_block = dates_block
         self.header = header
         self.main_block = main_block
@@ -98,7 +100,7 @@ class FlatParser:
         locator = FlatLocators.URL
         ad_url = get_soup_element(self.main_block, locator).text.split(': ')[1]
         logger.debug(f'Url found: {ad_url}')
-        return {'url': ad_url}
+        return ad_url
 
     @property
     def full_info(self):
@@ -118,27 +120,35 @@ class FlatParser:
 
         # Блок заголовка :::::::::::::::
         # Тип объекта
+        object_info['Тип объекта'] = 'Квартира'
         # Название объекта
+        object_info['Название'] = self.title['Название']
+        # Назначение объекта
+        object_info['Назначение'] = 'Жилое'
         # Количество комнат
+        object_info['Количество комнат'] = parse_rooms(self.title['Название'])
         # Адрес
-        # Район
+        object_info['Адрес'] = self.title['Адрес']
 
         # Основной блок :::::::::::::::
         # Характеристики объекта ----------
         # Площадь
+        object_info['Площадь'] = parse_area(self.title['Площадь'])
         # Жилая
+        object_info['Жилая площадь'] = parse_area(self.specs['Жилая'])
         # Кухня
-        # Площадь участка
+        object_info['Площадь кухни'] = parse_area(self.specs['Кухня'])
         # Планировка
         # Комнаты
         # Санузел
-        # Высота потолков
         # Окна
         # Балкон
         # Дом(строение)
         # Коммуникации
         # Этаж
+        object_info['Этаж'] = parse_floor(self.specs['Этаж/этажей в доме'])
         # Этажей в доме
+        object_info['Этажей в доме'] = parse_num_of_floors(self.specs['Этаж/этажей в доме'])
         # Лифт
         # Мусоропровод
         # Стадия строительства
@@ -146,11 +156,11 @@ class FlatParser:
         # Застройщик
 
         # Условия сделки -------------
+        object_info['Предложение'] = self.deal_type
         # Цена
-        # Торг
-        # Ипотека
-        # Продажа
+        object_info['Стоимость'] = int(self.deal_info['Цена'].replace(' ', '').strip())
 
         # url
+        object_info['url'] = self.url
 
         return object_info
