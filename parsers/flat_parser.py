@@ -139,11 +139,16 @@ class FlatParser:
         # Кухня
         object_info['Площадь кухни'] = parse_area(self.specs['Кухня'])
         # Планировка
+        object_info['Планировка квартиры'] = self.specs['Планировка квартиры'] if 'Планировка квартиры' in self.specs else ''
         # Комнаты
+        object_info['Комнаты'] = self.specs['Комнаты'] if 'Комнаты' in self.specs else ''
         # Санузел
+        object_info['Санузел'] = self.specs['Санузел'] if 'Санузел' in self.specs else ''
         # Окна
         # Балкон
+        object_info['Балкон'] = self.specs['Балкон'] if 'Балкон' in self.specs else ''
         # Дом(строение)
+        object_info['Дом(строение)'] = self.specs['Дом(строение)'] if 'Дом(строение)' in self.specs else ''
         # Коммуникации
         # Этаж
         object_info['Этаж'] = parse_floor(self.specs['Этаж/этажей в доме'])
@@ -151,8 +156,12 @@ class FlatParser:
         object_info['Этажей в доме'] = parse_num_of_floors(self.specs['Этаж/этажей в доме'])
         # Лифт
         # Мусоропровод
+        # Вторичное жильё
+        object_info['Вторичное жилье'] = self.specs['Вторичное жилье'] if 'Вторичное жилье' in self.specs else ''
         # Стадия строительства
-        # Год
+        object_info['Стадия строительства'] = self.specs['Стадия строительства'] if 'Стадия строительства' in self.specs else ''
+        # Дата сдачи
+        object_info['Дата сдачи'] = self.specs['Дата сдачи'] if 'Дата сдачи' in self.specs else ''
         # Застройщик
 
         # Условия сделки -------------
