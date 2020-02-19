@@ -31,7 +31,7 @@ page_count = page.page_count
 deal_type = 'Продажа'
 print(f'Найдено {page_count} страниц с объявлениями о продаже квартир')
 
-for i in range(1):
+for i in range(20):
     logger.debug(f'Opening {i+1} page with ads lists...')
     page_content = get_page_content(base_url + f'sellflatbank-50-{i+1}.html')
     page = AllFlatsPage(page_content)

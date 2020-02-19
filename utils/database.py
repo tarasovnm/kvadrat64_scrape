@@ -42,6 +42,6 @@ class DataBase:
 
   def info(self):
     print('База данных на основе CSV')
-    #print(f'Размер таблицы: {self.db.shape[0]} элементов с {self.db.shape[1]} характеристиками')
+    print(f'Размер таблицы: {self.db.shape[0]} элементов с {self.db.shape[1]} характеристиками')
     print(self.db.head())
 
